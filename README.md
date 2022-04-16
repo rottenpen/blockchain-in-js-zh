@@ -1,10 +1,10 @@
-# Build your own Blockchain in Javascript
+# 用 Javascript 创建我们的区块链
 
 With all the hype about blockchains and cryptocurrencies, I decided to learn a bit more about it. And what better way to learn than to try to build it yourself? Below you will find a step-to-step explanation of how a blockchain works and how to build one from their basic principles. At every step below, you can check out the equivalent version of the demo at [blockchain-step${N}.nambrot.com](https://blockchain.nambrot.com) with the final version being available at [blockchain.nambrot.com](https://blockchain.nambrot.com) Disclaimer: I took some liberties in some aspects where this blockchain will diverge from reality for pedagogical purposes.
 
-## Step 1: A chain of blocks?
+## Step 1: 区块里的链？
 
-To understand how blockchains work, let's start with the name. Blockchain? A chain of blocks?
+了解区块链的原理之前，我们先从区块里的一条链说起。
 
 A common misconception is that a blockchain is a single chain of blocks, when in reality, it's more like a tree of blocks. So at any given time, there are multiple chains for blocks by pointing to their respective parent. The pointing happens via hashes which are calculated based upon the data inside the block (i.e. hash of the parent, transaction data and other important stuff)
 
@@ -369,6 +369,10 @@ AND THATS IT!!! As you'll hopefully agree with me, blockchains are actually quit
 JK, there isn't as of yet. I might add merkle trees and segwit in the future, but for now, I hope this gives you a good overview of how blockchains such as Bitcoin work.
 
 
-## To run
+## 怎么运行
 
 This project is based upon `create-react-app` so a simple `yarn start` will pretty much start everything. You'll only need to start a simple `socket.io` server with `node src/server.js`. You can also run it with `docker-compose` if you prefer. Or find the most recent version running on [blockchain.nambrot.com](https://blockchain.nambrot.com)
+
+这个项目是基于 `create-react-app` 构建的，所以一条简单的 `yarn start` 即可完美运行一切。你只需要通过 `node src/server.js` 打开一个 `socket.io` 服务。根据你的喜好，你也可以执行 `docker-compose`。或者你可以在 [blockchain.nambrot.com](https://blockchain.nambrot.com) 找到更多实现。
+
+这个项目是基于 `create-react-app` 构建的，所以一条简单的 `yarn start` 即可完美运行一切。你只需要通过 `node src/server.js` 打开一个 `socket.io` 服务。根据你的喜好，你也可以执行 `docker-compose`。或者你可以找到更多的
