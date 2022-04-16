@@ -371,8 +371,4 @@ JK, there isn't as of yet. I might add merkle trees and segwit in the future, bu
 
 ## 怎么运行
 
-This project is based upon `create-react-app` so a simple `yarn start` will pretty much start everything. You'll only need to start a simple `socket.io` server with `node src/server.js`. You can also run it with `docker-compose` if you prefer. Or find the most recent version running on [blockchain.nambrot.com](https://blockchain.nambrot.com)
-
-这个项目是基于 `create-react-app` 构建的，所以一条简单的 `yarn start` 即可完美运行一切。你只需要通过 `node src/server.js` 打开一个 `socket.io` 服务。根据你的喜好，你也可以执行 `docker-compose`。或者你可以在 [blockchain.nambrot.com](https://blockchain.nambrot.com) 找到更多实现。
-
-这个项目是基于 `create-react-app` 构建的，所以一条简单的 `yarn start` 即可完美运行一切。你只需要通过 `node src/server.js` 打开一个 `socket.io` 服务。根据你的喜好，你也可以执行 `docker-compose`。或者你可以找到更多的
+这个项目是基于 `create-react-app` 构建的，所以一条简单的 `yarn start` 即可完美运行一切。你只需要通过 `node src/server.js` 打开一个 `socket.io` 服务。根据你的喜好，你也可以执行 `docker-compose`。或者你可以在 [blockchain.nambrot.com](https://blockchain.nambrot.com) 上直接运行。
