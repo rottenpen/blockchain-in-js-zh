@@ -1,6 +1,8 @@
 # 用 Javascript 创建我们的区块链
 
-With all the hype about blockchains and cryptocurrencies, I decided to learn a bit more about it. And what better way to learn than to try to build it yourself? Below you will find a step-to-step explanation of how a blockchain works and how to build one from their basic principles. At every step below, you can check out the equivalent version of the demo at [blockchain-step${N}.nambrot.com](https://blockchain.nambrot.com) with the final version being available at [blockchain.nambrot.com](https://blockchain.nambrot.com) Disclaimer: I took some liberties in some aspects where this blockchain will diverge from reality for pedagogical purposes.
+随着区块链和加密货币的大热，我决定深入了解它。还有什么比自己构建一个更好的学习方法呢？接下来你将通过一步又一步的实验来理解区块链是怎么运行的以及其基本原理。下面的每一个步骤，你都可以通过 [blockchain-step${N}.nambrot.com](https://blockchain.nambrot.com) 找到对应版本，以及通过 [blockchain.nambrot.com](https://blockchain.nambrot.com) 可以看到最终版本。
+免责声明：因为出于教学目的，在某些方面我的实现会不太标准，该区块链会偏离现实。
+
 
 ## Step 1: 区块里的链？
 
@@ -25,13 +27,15 @@ If you look at the code, you can see how the P2P aspect of blockchains comes int
 ![blockbroadcast](https://user-images.githubusercontent.com/571810/32704273-37b7b07a-c7d0-11e7-900c-851031c81ad4.gif)
 
 
-## Step 2: So what is THE blockchain?
+## Step 2: So what is THE blockchain? 所以什么是区块链呢
 
-[Link to Step 2 Demo](https://blockchain-step2.nambrot.com/)
+[第二步 Demo 的链接](https://blockchain-step2.nambrot.com/)
 
 In step 1, we saw that in a chain of blocks, the last block basically validates all data in the chain of its ascendents, as any change in the data up the chain would inevitably change the hash of the last block. That is all great, but what do people mean by THE blockchain?
+在第一步我们看到了一条链上的所有区块，最后一个区块会验证整条链上的所有信息，因为上层链路任何修改都会改变最后一个区块的哈希值。OK，那大家都用区块链干什么呢？
 
 By definition, THE blockchain is just the longest chain available in the tree. So at one point, a chain can be the longest one, but then get superseeded by another. Let's visualize the longest chain in the tree.
+根据定义，区块链就是树结构上的最长的链。根据这个定义，它是一条最长的链（todo）。让我们想象一下这个树上最长的链。
 
 ```javascript
 class Blockchain {
@@ -55,7 +59,7 @@ class Blockchain {
 
 So given a tree, the longest chain represents our current view of which history of blocks, and thus which representation of data is the one we deem valid.
 
-## Step 3: Not a free-for-all
+## Step 3: Not a free-for-all 不是对谁都是免费的
 
 [Link to Step 3 Demo](https://blockchain-step3.nambrot.com/)
 
@@ -269,6 +273,7 @@ You should recognize an additional method of keeping miners "honest". If miners 
 [Link to Step 6 Demo](https://blockchain-step6.nambrot.com/)
 
 What if you (or more specifically your computers) are bad at math, does that mean you don't get to have your transactions added to the blockchain? That would be terrible! Instead, as a non-mining node, let's add the ability to broadcast a transaction, that a different mining node can then add to their block:
+如果你数学不好（准确来说是你电脑算力不足），是否就以为这你无法将交易添加到区块链中？那也太可怕了吧！相反，作为非挖掘节点，让我们添加广播事务的功能，不同的挖掘节点可以将其添加到块中：
 
 ```javascript
 class Blockchain {
@@ -290,7 +295,7 @@ class Blockchain {
 ![txbroadcast](https://user-images.githubusercontent.com/571810/33802204-a2f0ed8c-dd3f-11e7-8fa7-3ba84f01e97d.gif)
 
 
-# Step 7: No free lunches
+# Step 7: No free lunches 天下没有免费的午餐
 
 [Link to Step 7 Demo](https://blockchain-step7.nambrot.com/)
 
@@ -323,11 +328,12 @@ class UTXOPool {
 }
 ```
 
-# Step 8: Don't touch my money
+# Step 8: Don't touch my money 不要碰我的钱
 
 [Link to Final Demo](https://blockchain.nambrot.com/)
 
 If you paid attention, you have noticed that it was possible for any node to spend any UTXO available. If that were the case in reality, it would be madness! Let's fix this by completing the ownership story. As we said above, ownership is really just the ability to prove that you have generated the private key. So to know if a transaction was truly the intention of the owner, all we have to do is request a signature of the transaction hash with the private key. Nodes can then verify that the signature is indeed valid for the transaction when they validate transaction of blocks they are receiving.
+如果你注意了，你已经注意到任何节点
 
 ```javascript
 class Transaction {
@@ -367,6 +373,8 @@ AND THATS IT!!! As you'll hopefully agree with me, blockchains are actually quit
 # Wait, there is more
 
 JK, there isn't as of yet. I might add merkle trees and segwit in the future, but for now, I hope this gives you a good overview of how blockchains such as Bitcoin work.
+
+这就结束了？将来我会添加 merkle trees 和 segwit 相关的功能进来，但就目前来说，我希望可以让你更好的理解区块链，比如比特币是怎么工作的。
 
 
 ## 怎么运行
