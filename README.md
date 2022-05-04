@@ -1,6 +1,6 @@
 # 用 Javascript 创建我们的区块链
 
-随着区块链和加密货币的大热，我决定深入了解它。还有什么比自己构建一个更好的学习方法呢？接下来你将通过一步又一步的实验来理解区块链是怎么运行的以及其基本原理。下面的每一个步骤，你都可以通过 [blockchain-step${N}.nambrot.com](https://blockchain.nambrot.com) 找到对应版本，以及通过 [blockchain.nambrot.com](https://blockchain.nambrot.com) 可以看到最终版本。
+随着区块链和加密货币的大热，我决定深入了解它。还有什么比自己构建一个更好的学习方法呢？接下来你将通过一步又一步的实验来理解区块链是怎么运行的，深入了解其中原理。下面的每一个步骤，你都可以通过 [blockchain-step${N}.nambrot.com](https://blockchain.nambrot.com) 找到对应版本，以及通过 [blockchain.nambrot.com](https://blockchain.nambrot.com) 可以看到最终版本。
 免责声明：因为出于教学目的，在某些方面我的实现会不太标准，该区块链会偏离现实。
 
 
@@ -8,21 +8,24 @@
 
 了解区块链的原理之前，我们先从区块里的一条链说起。
 
-A common misconception is that a blockchain is a single chain of blocks, when in reality, it's more like a tree of blocks. So at any given time, there are multiple chains for blocks by pointing to their respective parent. The pointing happens via hashes which are calculated based upon the data inside the block (i.e. hash of the parent, transaction data and other important stuff)
+区块链常常被误以为是一条单独的链，实际上，区块链更像一棵区块树。因此在任何时间节点中，区块都有很多条链指向它们的父级。而这个指向是通过区块中的数据（例如: 父节点的哈希值，交易数据和其他重要的东西）所计算出来的。
 
-By pointing via hashes of blocks, we can enforce a specific order of blocks. I.e given a chain of blocks, you can't just take a block in the middle of the chain and change its data, since that would change its hash and subsequently also all blocks that are descendents of the block in question.
+因为区块哈希值的存在，区块链将强制按照指定的规则运行。例如，给定一个区块链，你不能只修改中间某一个节点的数据，因为这将改变这个节点的哈希值，从而导致它关联的所有子区块的哈希值都发生变化。
 
 ```javascript
 class Block {
   constructor(blockchain, parentHash, nonce = sha256(new Date().getTime().toString()).toString()) {
     this.blockchain = blockchain;
+    // 当前节点数据
     this.nonce = nonce;
     this.parentHash = parentHash;
+    // 哈希值是根据 当前节点的数据以及父节点的哈希值进行计算的
     this.hash = sha256(this.nonce + this.parentHash).toString()
   }
+}
 ```
 
-If you look at the code, you can see how the P2P aspect of blockchains comes into play. Once a node decided it "mined" a block, it can broadcast that block to all other nodes, you can verify it and then add it to their tree, as well.
+从上面的代码，你可以看到区块链的 P2P 是怎样运作的。当一个节点决定“挖掘”一个区块的时候，它就可以将该区块广播给所有其他节点，其他节点可以对其进行验证，然后添加到各自的树中。
 
 ![blockbroadcast](https://user-images.githubusercontent.com/571810/32704273-37b7b07a-c7d0-11e7-900c-851031c81ad4.gif)
 
@@ -31,11 +34,9 @@ If you look at the code, you can see how the P2P aspect of blockchains comes int
 
 [第二步 Demo 的链接](https://blockchain-step2.nambrot.com/)
 
-In step 1, we saw that in a chain of blocks, the last block basically validates all data in the chain of its ascendents, as any change in the data up the chain would inevitably change the hash of the last block. That is all great, but what do people mean by THE blockchain?
 在第一步我们看到了一条链上的所有区块，最后一个区块会验证整条链上的所有信息，因为上层链路任何修改都会改变最后一个区块的哈希值。OK，那大家都用区块链干什么呢？
 
-By definition, THE blockchain is just the longest chain available in the tree. So at one point, a chain can be the longest one, but then get superseeded by another. Let's visualize the longest chain in the tree.
-根据定义，区块链就是树结构上的最长的链。根据这个定义，它是一条最长的链（todo）。让我们想象一下这个树上最长的链。
+根据定义，区块链就是树结构上的最长的链。根据这个定义，它是一条最长的链。让我们想象一下这个树上最长的链。
 
 ```javascript
 class Blockchain {
@@ -57,8 +58,8 @@ class Blockchain {
 
 ![最长链](https://user-images.githubusercontent.com/571810/33043509-b40cb21c-ce13-11e7-8fb2-20f3932e85d1.gif)
 
-So given a tree, the longest chain represents our current view of which history of blocks, and thus which representation of data is the one we deem valid.
-因此这棵树上最长链就代表了整个区块的历史，因此我们可以确定哪一块是有效的。
+这棵树上最长链就代表了整个区块的历史，因此我们可以确定哪一块是有效的。
+
 ## Step 3: Not a free-for-all 不是对谁都是免费的
 
 [Link to Step 3 Demo](https://blockchain-step3.nambrot.com/)
