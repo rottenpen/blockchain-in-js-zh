@@ -36,7 +36,7 @@ class Block {
 
 在第一步我们看到了一条链上的所有区块，最后一个区块会验证整条链上的所有信息，因为上层链路任何修改都会改变最后一个区块的哈希值。OK，那大家都用区块链干什么呢？
 
-根据定义，区块链就是树结构上的最长的链。根据这个定义，它是一条最长的链。让我们想象一下这个树上最长的链。
+根据定义，区块链就是树结构上的最长的链。因此，这条最长链是可以被其他更长的链取代的。让我们来看看这条最长的链是怎么实现的。
 
 ```javascript
 class Blockchain {
@@ -58,16 +58,16 @@ class Blockchain {
 
 ![最长链](https://user-images.githubusercontent.com/571810/33043509-b40cb21c-ce13-11e7-8fb2-20f3932e85d1.gif)
 
-这棵树上最长链就代表了整个区块的历史，因此我们可以确定哪一块是有效的。
+在一个树中，这个最长链可以代表当前时间节点这个树的历史，因此我们可以它来确定哪一块的数据是有效的。
 
-## Step 3: Not a free-for-all 不是对谁都是免费的
+## Step 3: Not a free-for-all 不是谁都能改的
 
 [Link to Step 3 Demo](https://blockchain-step3.nambrot.com/)
 
-If real blockchains worked like Step 2, then it would be a chaotic free-for-all where nodes just can abitrarily fork a chain of blocks and add basically infinitely many blocks to it, to make it the longest chain and thus THE blockchain (as you have seen in the above GIF). That would mean that anyone could just change history and effectively mutate past data. How do we avoid that situation?
-如果真的区块链像第2步一样运行，
-我们如何避免这种情况呢？
+如果区块链真的像第二步那么运作，就乱套了。任何节点分出来的分支都可以随便通过添加上无限个区块成为最长链，从而成为区块链。这意味着任何人都可以改变历史并有效地改变过去的数据。那我们如何避免这种情况呢？
+
 By making it difficult to add a block with a computational puzzle. Instead of accepting any arbitrary block, part of the concensus rules of a blockchain mandate what blocks are valid and which ones aren't. In this case, we want to make adding blocks resource-intensive. The most common way of doing so, and probably the most admirable piece of the original Bitcoin whitepaper), is to pair this with proof-of-work (POW). POW allows us to ensure that nodes who want to add blocks to the tree to proof that they had to expend considerable effort. Since the SHA256 hash of a block is (hopefully) truly random, we can mandate that the hash ends in a certain number of '0's (in Bitcoin the requirement is for it to start with a certain number of '0's).
+这个解决方案就是通过添加复杂的数学运算来提高插入节点的难度。区块链共识规定了哪些块有效的，哪些块是无效的。在这种情况下，我们希望通过密集计算提高它的成本。最常见的做法就是像比特币白皮书那样（也是它最令人佩服的部分），将节点和工作量证明（POW）配对。通过 POW 可以确保了每一个区块节点都要证明它们付出了巨大的努力才能添加到树中。我们可以要求散列以一定数量的“0”结尾，来实现一个块的 SHA256 散列（希望）是真正随机的。（在比特币中，要求它以一定数量的“0”开头）
 
 ```javascript
 class Block {
@@ -271,12 +271,12 @@ You should recognize an additional method of keeping miners "honest". If miners 
 
 ![addingtx](https://user-images.githubusercontent.com/571810/33800311-3746ef66-dd0b-11e7-9427-64c0053a4d5e.gif)
 
-# Step 6: I don't do math.
+# Step 6: 不一定要计算
 
 [Link to Step 6 Demo](https://blockchain-step6.nambrot.com/)
 
 What if you (or more specifically your computers) are bad at math, does that mean you don't get to have your transactions added to the blockchain? That would be terrible! Instead, as a non-mining node, let's add the ability to broadcast a transaction, that a different mining node can then add to their block:
-如果你数学不好（准确来说是你电脑算力不足），是否就以为这你无法将交易添加到区块链中？那也太可怕了吧！相反，作为非挖掘节点，让我们添加广播事务的功能，不同的挖掘节点可以将其添加到块中：
+如果你数学不好（准确来说是你电脑算力不足），是否就以为这你无法将交易添加到区块链中？那也太可怕了吧！相反，作为非挖掘节点，我们也可以订阅广播，来实现类似挖掘节点的能力：
 
 ```javascript
 class Blockchain {
