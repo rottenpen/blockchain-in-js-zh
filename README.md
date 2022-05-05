@@ -66,8 +66,7 @@ class Blockchain {
 
 如果区块链真的像第二步那么运作，就乱套了。任何节点分出来的分支都可以随便通过添加上无限个区块成为最长链，从而成为区块链。这意味着任何人都可以改变历史并有效地改变过去的数据。那我们如何避免这种情况呢？
 
-By making it difficult to add a block with a computational puzzle. Instead of accepting any arbitrary block, part of the concensus rules of a blockchain mandate what blocks are valid and which ones aren't. In this case, we want to make adding blocks resource-intensive. The most common way of doing so, and probably the most admirable piece of the original Bitcoin whitepaper), is to pair this with proof-of-work (POW). POW allows us to ensure that nodes who want to add blocks to the tree to proof that they had to expend considerable effort. Since the SHA256 hash of a block is (hopefully) truly random, we can mandate that the hash ends in a certain number of '0's (in Bitcoin the requirement is for it to start with a certain number of '0's).
-这个解决方案就是通过添加复杂的数学运算来提高插入节点的难度。区块链共识规定了哪些块有效的，哪些块是无效的。在这种情况下，我们希望通过密集计算提高它的成本。最常见的做法就是像比特币白皮书那样（也是它最令人佩服的部分），将节点和工作量证明（POW）配对。通过 POW 可以确保了每一个区块节点都要证明它们付出了巨大的努力才能添加到树中。我们可以要求散列以一定数量的“0”结尾，来实现一个块的 SHA256 散列（希望）是真正随机的。（在比特币中，要求它以一定数量的“0”开头）
+这个解决方案就是通过添加复杂的数学运算来提高插入节点的难度。区块链共识规定了哪些块有效的，哪些块是无效的。在这种情况下，我们希望通过密集计算提高它的成本。最常见的做法就是像比特币白皮书那样（也是它最令人佩服的部分），将节点和工作量证明（POW）配对。通过 POW 可以确保了每一个区块节点都要证明它们付出了巨大的努力才能添加到树中。由于 区块哈希是真随机（希望是）的，我们强制要求其结尾有一定数量的 '0'（在比特币中，要求它以一定数量的“0”开头）
 
 ```javascript
 class Block {
@@ -87,19 +86,20 @@ class Block {
   }
 }
 ```
-
-The actual number of '0's in real world blockchains is calculated dynamically based upon the speed at which recent blocks have been added. A miner would then have to try many different nonces to hope that evetually it yields in a hash that ends with {DIFFICULTY} '0's.
+在真实的区块链中，0 的数量是根据最近一次添加的节点计算出来的。挖矿节点不得不尝试许多不同的随机数，才能得到最终以 {DIFFICULTY} 个'0'结尾的哈希值。
 
 ![proofofwork](https://user-images.githubusercontent.com/571810/33279514-cdae5fd2-d36c-11e7-97c5-94e61d4e9bce.gif)
 
+
+Proof-of-work 是区块链可以实现去中心化的奥妙所在，同时也是遭到臭名昭著的 51% [双花难题](https://www.zhihu.com/question/407239242/answer/1344042223)的由来。一旦一个块进入区块链，攻击者不得不为其后面的所有块重做 proof-of-work。
 Proof-of-work is what "secures" the blockchain, makes it decentralized and the reason where the infamous 51% double-spend attack comes from. Once a block makes it onto the blockchain (the longest chain of blocks), an attacker would have to redo the proof-of-work for that block and all blocks following it. The example would be a double-spend: Add a transaction to a block, but then make it "invalid" by mining an alternate chain from the parent. However, without having 51% of the computation power of the network, it would be always lagging behind all the other nodes in the network trying to add blocks from the currently legitimate blockchain. Thus the security of the blockchain relies on computational power to not be centralized within single parties.
 
-## Step 4: What do I mine?
+## Step 4: What do I mine? 我要怎么挖矿呢？
 
 [Link to Step 4 Demo](https://blockchain-step4.nambrot.com/)
 
 So the question is why miners would expend all this effort to add a block? Unless it is a fun game for them, usually we are talking about economic incentives now. In order for the blockchain to be secured by miners, the protocol gives miners a mining reward, currently amounting to 12.5 Bitcoin. Other nodes will accept the miners block with the reward to itself as long as it passes the other rules of the protocol we discussed above. Let's talk about the specific mechanic of how a miner gives itself the reward, which requires a concept of ownership and a way to include such ownership in a block.
-
+所以为什么矿工要花费这么大的精力来添加一个块呢？要么这对于他们来说是一场有趣的游戏，要么我们需要给予他们经济上的奖励。为了让矿工保护区块链，该协议为矿工提供了挖矿奖励，目前是 12.5 比特币。只要它通过我们上面讨论的其他规则，其他节点就会接受这个挖矿节点并允许它奖励自己。
 To understand ownership, you'll need a high-level understanding of public-key encryption which is beyond the scope of this tutorial. ([https://www.youtube.com/watch?v=3QnD2c4Xovk](https://www.youtube.com/watch?v=3QnD2c4Xovk) looks like a good non-technical explanation). All you need to know for this is that the following possible:
 
 1. There is a way to generate two things, a public key and a private key. Keep the private key secret.
@@ -179,20 +179,19 @@ class Blockchain {
 }
 ```
 
-As you can see, if we keep mining more blocks, we keep accumulating coins.
+正如你看到，如果我们继续挖更多的区块，我们就能计算出更多的币。
 
 ![utxopool](https://user-images.githubusercontent.com/571810/33613173-ec3851de-d9a1-11e7-8a2d-90adce353ac5.gif)
 
-This way, you should also start the see of how the blockchain acts as a ledger, but also how it is inherently volatile. A fork in the blockchain will yield different UTXOPools and thus different assertions over coins (which is why securing consensus is so important) as you can see in the GIF below. That's why it is generally recommended to wait a certain number of blocks until you can consider a transaction to be settled, otherwise a fork can invalidate what you assumed to be the state of the ledger.
+因此你还应该开始了解区块链是如何饰演账本的角色，同时需要了解它是如何变现的。正如你在下面的 GIF 中看到的那样，区块链中的分叉产生了不同的 UTXOPools，从而产生不同的币（这就是确保共识如此重要的原因）。 这就是为什么通常建议等待块的数量达到一定数目，再考虑进行结算交易，否则分叉可能使您的账本状态无效。
 
 ![51attack](https://user-images.githubusercontent.com/571810/33613179-f1c861c0-d9a1-11e7-8366-4064cec2e95b.gif)
 
-### Step 5: You get a coin! You get a coin! 你得到一个币了！
+### Step 5: 你得到一个币了！
 
 [Link to Step 5 Demo](https://blockchain-step5.nambrot.com/)
 
-We are getting very close to have this be a usable blockchain. The only thing we are really lacking is the ability to send someone a coin. We are finally getting to transactions. And it's actually pretty simple:
-
+我们已经非常接近让它成为一个可用的区块链，唯一真正缺乏的是向某人发送硬币的能力。加上这个功能，我们终于开始交易了。它实际上非常简单：
 
 ```javascript
 class Transaction {
@@ -214,6 +213,7 @@ class Transaction {
 ```
 
 A transaction is simply a declaration to move ownership from one public key to the other, thus all we have to record in a transaction is the public key that has any coins, the target public key and the amount of coins we want to transfer. (In real Bitcoin, UTXOs have to be fully consumed and can have multiple inputs and outputs.) We obviously need to make sure that people only spend coins that exist. We do that with the UTXOPool which keeps track of "balances".
+交易只是一个把公钥的所有权转移给另一个节点的声明，因此我们在交易中只需要记录当前公钥和目标公钥以及想要转多少个币的信息。（在真正的比特币中，UTXO 必须被完全消耗，并且可以有多个输入和输出）我们显然需要确保人们只能花费存在的币。我们通过跟踪“余额”的 UTXOPool 来做到这一点。
 
 ```javascript
 class UTXOPool {
@@ -235,7 +235,7 @@ class UTXOPool {
 ```
 
 Since we add the hashes of the transactions to the computation of the block hash, other nodes in the network can easily verify that the transactions are 1. valid given a block's ascendants and 2. came from a node that had to do the "proof-of-work".
-
+由于我们将交易的哈希信息放到区块中运算了，其他节点能轻易验证出 1. 这个区块的父节点是否有效 2. 这个交易必须来自已经进行了 POW.
 ```javascript
 class Blockchain {
   _addBlock(block) {
@@ -267,7 +267,7 @@ class Blockchain {
 }
 ```
 
-You should recognize an additional method of keeping miners "honest". If miners include transactions that are invalid, peer nodes will reject the block and thus not consider it to be part of the longest chain. Thus we maintain concensus over valid transactions. Here is everything in GIF-form:
+你应该意识到这是一个保持矿工“真诚”的方法。如果矿工包含了无效的教育，其他节点将拒绝这个区块，认为它不是最长链的一部分。我们要确保有效交易的共识。看看 GIF：
 
 ![addingtx](https://user-images.githubusercontent.com/571810/33800311-3746ef66-dd0b-11e7-9427-64c0053a4d5e.gif)
 
@@ -275,8 +275,7 @@ You should recognize an additional method of keeping miners "honest". If miners 
 
 [Link to Step 6 Demo](https://blockchain-step6.nambrot.com/)
 
-What if you (or more specifically your computers) are bad at math, does that mean you don't get to have your transactions added to the blockchain? That would be terrible! Instead, as a non-mining node, let's add the ability to broadcast a transaction, that a different mining node can then add to their block:
-如果你数学不好（准确来说是你电脑算力不足），是否就以为这你无法将交易添加到区块链中？那也太可怕了吧！相反，作为非挖掘节点，我们也可以订阅广播，来实现类似挖掘节点的能力：
+如果你数学不好（准确来说是你电脑算力不足），是否就以为这你无法将交易添加到区块链中？那也太可怕了吧！相反，作为非挖矿节点，我们也可以订阅广播，来实现类似交易的能力：
 
 ```javascript
 class Blockchain {
@@ -298,11 +297,11 @@ class Blockchain {
 ![txbroadcast](https://user-images.githubusercontent.com/571810/33802204-a2f0ed8c-dd3f-11e7-8fa7-3ba84f01e97d.gif)
 
 
-# Step 7: No free lunches 天下没有免费的午餐
+# Step 7: 天底下没有免费的午餐
 
 [Link to Step 7 Demo](https://blockchain-step7.nambrot.com/)
 
-Unless you subscribe to the charitable interpretations of "love thy neighbor", people generally don't like to do things free for others. So why would a mining node add a transaction for a non-mining node? You are right, they wouldn't. So let's add some incentives for them with a transaction fee that we can specify as a transaction author to increase the chances of some mining node adding our transaction to their block.
+除非你赞同 “爱你的邻居” 这种做慈善的说法，人们通常不喜欢免费为其他人做事。那么为什么挖矿节点要为非挖矿节点添加交易呢？是的，他们不会这么做。因此，让我们通过交易费用为他们添加一些激励措施，我们可以指定一些矿点作为交易作者，他们的区块可以在我们的交易中获取小费。
 
 ```javascript
 class Block {
@@ -375,10 +374,7 @@ AND THATS IT!!! As you'll hopefully agree with me, blockchains are actually quit
 
 # Wait, there is more
 
-JK, there isn't as of yet. I might add merkle trees and segwit in the future, but for now, I hope this gives you a good overview of how blockchains such as Bitcoin work.
-
 这就结束了？将来我会添加 merkle trees 和 segwit 相关的功能进来，但就目前来说，我希望可以让你更好的理解区块链，比如比特币是怎么工作的。
-
 
 ## 怎么运行
 
