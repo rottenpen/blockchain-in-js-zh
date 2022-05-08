@@ -92,23 +92,24 @@ class Block {
 
 工作量证明（Proof-of-work）是区块链可以实现去中心化的奥妙所在，同时也是遭到臭名昭著的 51% [双花难题](https://www.zhihu.com/question/407239242/answer/1344042223)的由来。一旦一个区块进入区块链，攻击者不得不为其后面的所有块重做工作量证明（ proof-of-work）。这里有个双花难题的例子：添加一笔交易到一个区块，但随后通过从父区块中挖出另一条链使其无效。然而，如果没有 51% 的算量，它将总是落后于其他合法的节点。因此，区块链的安全保障全依赖于算力不被集中在单一节点。
 
-## Step 4: What do I mine? 我要怎么挖矿呢？
+## Step 4: 我要怎么挖矿呢？
 
 [Link to Step 4 Demo](https://blockchain-step4.nambrot.com/)
 
-那么问题来了，为什么矿工要花费这么大的精力来添加一个块呢？要么这对于他们来说是一场有趣的游戏，要么我们需要给予他们经济上的奖励。为了让矿工保护区块链，该协议为矿工提供了挖矿奖励，目前是 12.5 比特币。只要它通过我们上面讨论的其他规则，其他节点就会接受这个挖矿节点并允许它奖励自己。让我们来谈谈矿工如何给自己奖励的具体机制，这需要一个所有权的概念和将这种所有权纳入区块的方法。
+那么问题来了，为什么矿工要花费这么大的精力来添加一个块呢？要么这对于他们来说是一场有趣的游戏，要么我们需要给予他们经济上的奖励。为了让矿工保护区块链，该协议为矿工提供了挖矿奖励，目前是 12.5 比特币。只要它通过我们上面讨论的其他规则，其他节点就会接受这个挖矿节点并允许它奖励自己。让我们来谈谈矿工如何给自己奖励的具体机制，这需要一个所有权的概念和将这种所有权纳入区块的方法。（当矿工挖到了矿，就可以自己生成一个公钥，广播给其他节点听，我这个公钥有多少个币）
+> 从比特币发明最初的 50 个比特币/区块到 2016 年后的 12.5 个比特币/区块，并会在 2040 年达到总数接近 2100 万个比特币，在那之后新的区块不再包含比特币奖励，矿工的收益全部来自交易费。
 
-为了理解所有权，你需要对公钥有更高级别的理解，这超出了本教程的范围。[https://www.youtube.com/watch?v=3QnD2c4Xovk](https://www.youtube.com/watch?v=3QnD2c4Xovk) 这是一个看起来很好的非技术性教程。为此，你需要知道的是以下情况可能发生：
+为了理解所有权，你需要对公钥有更高级别的理解，这超出了本教程的范围。[https://www.youtube.com/watch?v=3QnD2c4Xovk](https://www.youtube.com/watch?v=3QnD2c4Xovk) 这是一个看起来很好的非技术性教程。接下来，你只需要知道的是以下情况可能发生：
 
-1. 有一种方法可以生成两样东西，一个公钥和一个私钥。保持私钥的秘密。
+1. 有一种方法可以生成两样东西，一个公钥和一个私钥。矿工来保存私钥。
 
-2. 根据名称，公钥是你可以公开发布给其他各方的东西。
+2. 公钥是你可以公开广播给其他各方的东西。
 
 3. 为了证明你是产生公钥的人，你可以用你的私钥签署一个特定的信息（或任意的数据）。其他人可以用你的签名（专门针对该信息）、该信息以及你的公钥，并验证该签名确实来自于控制私钥的人（因为没有私钥，就没有办法令人满意地签署该信息）。
 
 4. 使用公钥，你可以对信息（数据）进行加密，以便只有私钥的拥有者可以解密。
 
-简而言之，所有权是控制某物的概念，在这种情况下，你 "拥有 "公钥，你可以通过用你的私钥签署数据来证明这种所有权。因此，为了获得采矿奖励，即要求对其拥有所有权，矿工所要做的就是在区块中包括他们的公钥。该公钥也被称为比特币的钱包地址（过于简单）。
+简而言之，所有权是控制某物的概念，在这种情况下，你 "拥有 "公钥，你可以通过用你的私钥签署数据来证明这种所有权。因此，为了获得采矿奖励，即要求对其拥有所有权，矿工所要做的就是在区块中包括他们的公钥。该公钥也被称为比特币的钱包地址。
 
 因此，我们只需在区块中添加一个名为 "coinbaseBeneficiary "的字段，包含矿工的公钥，并将其添加到哈希计算的有效载荷中。
 
@@ -135,7 +136,13 @@ class Block {
 }
 ```
 
-Thus, a coin is just ownership over a public key with a private key. By walking down a chain of blocks, you can add up which public keys own how many coins. In reality, these are called Unspent Transaction Outputs (UTXOs), the transaction part will come shortly). To avoid having to traverse chains of blocks everytime we want to find out how many coins an address controls, we "cache" that knowledge with each block into a UTXO pool. Whenever we add a block to a parent, we just take the parents UTXO pool and add the coins of the coinbase beneficiary.
+因此，一个硬币只对一个公钥与一个私钥拥有所有权。沿着区块链往下走，你可以把哪些公钥拥有多少个币加起来。在现实中，这些被称为未花费的输出（[UTXO](https://zhuanlan.zhihu.com/p/74050135)）。为了避免每次我们想知道一个地址控制了多少个币时都要遍历区块链，我们把这些知识与每个区块一起 "缓存" 到 UTXO 池中。每当我们把一个区块添加到父区块时，我们只需在父区块的UTXO池中添加coinbase受益人的硬币。
+
+> 在当前的区块链项目中，主要有两种记录保存方式，一种是账户/余额模型，一种是UTXO模型。比特币采用就是UTXO模型，以太坊、EOS等则采用的是账户/余额模型。
+UTXO是 Unspent Transaction Output 的缩写，意思是未花费的输出，可以简单理解为还没有用掉的收款。比如韩梅梅收到一笔比特币，她没有用掉，这笔比特币对她来说就是一个UTXO。
+> UTXO 核心设计思路是：它记录交易事件，而不记录最终状态
+![image](https://user-images.githubusercontent.com/12029924/167297622-8dd5b10f-bccc-4f0f-96df-f4db157f741f.png)
+
 
 ```javascript
 class UTXOPool {
