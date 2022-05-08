@@ -141,8 +141,6 @@ class Block {
 > 在当前的区块链项目中，主要有两种记录保存方式，一种是账户/余额模型，一种是UTXO模型。比特币采用就是UTXO模型，以太坊、EOS等则采用的是账户/余额模型。
 UTXO是 Unspent Transaction Output 的缩写，意思是未花费的输出，可以简单理解为还没有用掉的收款。比如韩梅梅收到一笔比特币，她没有用掉，这笔比特币对她来说就是一个UTXO。
 > UTXO 核心设计思路是：它记录交易事件，而不记录最终状态
-![image](https://user-images.githubusercontent.com/12029924/167297622-8dd5b10f-bccc-4f0f-96df-f4db157f741f.png)
-
 
 ```javascript
 class UTXOPool {
@@ -220,7 +218,8 @@ class Transaction {
 }
 ```
 
-交易只是一个把公钥的所有权转移给另一个节点的声明，因此我们在交易中只需要记录当前公钥和目标公钥以及想要转多少个币的信息。（在真正的比特币中，UTXO 必须被完全消耗，并且可以有多个输入和输出）我们显然需要确保人们只能花费存在的币。我们通过跟踪“余额”的 UTXOPool 来做到这一点。
+交易只是一个把公钥的所有权转移给另一个节点的声明，因此我们在交易中只需要记录当前公钥和目标公钥以及想要转多少个币的信息。（在真正的比特币中，UTXO 必须被完全消耗，并且可以有多个输入和输出）我们显然需要确保人们只能花费存在的币。我们通过跟踪“余额”的 UTXOPool 来做到这一点。（所以下图有转给自己的概念）
+![image](https://user-images.githubusercontent.com/12029924/167297622-8dd5b10f-bccc-4f0f-96df-f4db157f741f.png)
 
 ```javascript
 class UTXOPool {
@@ -336,11 +335,11 @@ class UTXOPool {
 }
 ```
 
-# Step 8: Don't touch my money 不要碰我的钱
+# Step 8: 不要碰我的钱
 
 [Link to Final Demo](https://blockchain.nambrot.com/)
 
-你已经注意到任何节点都有可能消费可用的 UTXO。如果是这样也太疯狂了吧！让我们通过所有权来修复这个问题。正如我们上面所说的，所有权实际上就是你可以生成私钥的能力。为了确认所有者的意图，我们需要私钥和一个哈希签名。然后当节点接收到交易的区块时，可以验证签名对交易来说确实有效。
+你已经注意到任何节点都有可能消费可用的 UTXO。如果是这样也太疯狂了吧！让我们通过所有权来修复这个问题。正如我们上面所说的，所有权实际上就是你可以生成私钥的能力。为了确认所有者的意图，我们需要私钥和一个哈希签名。然后当节点接收到交易的区块时，可以验证签名对交易来说确实有效。（也就是说，每次交易都会用当前交易者的私钥生成签名，广播给其他节点配合对应的公钥进行验证，这次交易是否有效）
 ```javascript
 class Transaction {
   constructor(inputPublicKey, outputPublicKey, amount, fee, signature) {
