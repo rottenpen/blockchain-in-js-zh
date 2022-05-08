@@ -90,24 +90,21 @@ class Block {
 
 ![proofofwork](https://user-images.githubusercontent.com/571810/33279514-cdae5fd2-d36c-11e7-97c5-94e61d4e9bce.gif)
 
-
-Proof-of-work 是区块链可以实现去中心化的奥妙所在，同时也是遭到臭名昭著的 51% [双花难题](https://www.zhihu.com/question/407239242/answer/1344042223)的由来。一旦一个块进入区块链，攻击者不得不为其后面的所有块重做 proof-of-work。
-Proof-of-work is what "secures" the blockchain, makes it decentralized and the reason where the infamous 51% double-spend attack comes from. Once a block makes it onto the blockchain (the longest chain of blocks), an attacker would have to redo the proof-of-work for that block and all blocks following it. The example would be a double-spend: Add a transaction to a block, but then make it "invalid" by mining an alternate chain from the parent. However, without having 51% of the computation power of the network, it would be always lagging behind all the other nodes in the network trying to add blocks from the currently legitimate blockchain. Thus the security of the blockchain relies on computational power to not be centralized within single parties.
+工作量证明（Proof-of-work）是区块链可以实现去中心化的奥妙所在，同时也是遭到臭名昭著的 51% [双花难题](https://www.zhihu.com/question/407239242/answer/1344042223)的由来。一旦一个区块进入区块链，攻击者不得不为其后面的所有块重做工作量证明（ proof-of-work）。这里有个双花难题的例子：添加一笔交易到一个区块，但随后通过从父区块中挖出另一条链使其无效。然而，如果没有 51% 的算量，它将总是落后于其他合法的节点。因此，区块链的安全保障全依赖于算力不被集中在单一节点。
 
 ## Step 4: What do I mine? 我要怎么挖矿呢？
 
 [Link to Step 4 Demo](https://blockchain-step4.nambrot.com/)
 
-So the question is why miners would expend all this effort to add a block? Unless it is a fun game for them, usually we are talking about economic incentives now. In order for the blockchain to be secured by miners, the protocol gives miners a mining reward, currently amounting to 12.5 Bitcoin. Other nodes will accept the miners block with the reward to itself as long as it passes the other rules of the protocol we discussed above. Let's talk about the specific mechanic of how a miner gives itself the reward, which requires a concept of ownership and a way to include such ownership in a block.
-那么问题来了，为什么矿工要花费这么大的精力来添加一个块呢？要么这对于他们来说是一场有趣的游戏，要么我们需要给予他们经济上的奖励。为了让矿工保护区块链，该协议为矿工提供了挖矿奖励，目前是 12.5 比特币。只要它通过我们上面讨论的其他规则，其他节点就会接受这个挖矿节点并允许它奖励自己。
+那么问题来了，为什么矿工要花费这么大的精力来添加一个块呢？要么这对于他们来说是一场有趣的游戏，要么我们需要给予他们经济上的奖励。为了让矿工保护区块链，该协议为矿工提供了挖矿奖励，目前是 12.5 比特币。只要它通过我们上面讨论的其他规则，其他节点就会接受这个挖矿节点并允许它奖励自己。让我们来谈谈矿工如何给自己奖励的具体机制，这需要一个所有权的概念和将这种所有权纳入区块的方法。
 
-为了理解所有权，你
+为了理解所有权，你需要对公钥有更高级别的理解，这超出了本教程的范围。[https://www.youtube.com/watch?v=3QnD2c4Xovk](https://www.youtube.com/watch?v=3QnD2c4Xovk) 这是一个看起来很好的非技术性教程。为此，你需要知道的是以下情况可能发生：
 
 1. 有一种方法可以生成两样东西，一个公钥和一个私钥。保持私钥的秘密。
 
 2. 根据名称，公钥是你可以公开发布给其他各方的东西。
 
-3. 
+3. 为了证明你是产生公钥的人，你可以用你的私钥签署一个特定的信息（或任意的数据）。其他人可以用你的签名（专门针对该信息）、该信息以及你的公钥，并验证该签名确实来自于控制私钥的人（因为没有私钥，就没有办法令人满意地签署该信息）。
 
 4. 使用公钥，你可以对信息（数据）进行加密，以便只有私钥的拥有者可以解密。
 
