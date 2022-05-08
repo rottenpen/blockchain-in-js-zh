@@ -99,17 +99,21 @@ Proof-of-work is what "secures" the blockchain, makes it decentralized and the r
 [Link to Step 4 Demo](https://blockchain-step4.nambrot.com/)
 
 So the question is why miners would expend all this effort to add a block? Unless it is a fun game for them, usually we are talking about economic incentives now. In order for the blockchain to be secured by miners, the protocol gives miners a mining reward, currently amounting to 12.5 Bitcoin. Other nodes will accept the miners block with the reward to itself as long as it passes the other rules of the protocol we discussed above. Let's talk about the specific mechanic of how a miner gives itself the reward, which requires a concept of ownership and a way to include such ownership in a block.
-所以为什么矿工要花费这么大的精力来添加一个块呢？要么这对于他们来说是一场有趣的游戏，要么我们需要给予他们经济上的奖励。为了让矿工保护区块链，该协议为矿工提供了挖矿奖励，目前是 12.5 比特币。只要它通过我们上面讨论的其他规则，其他节点就会接受这个挖矿节点并允许它奖励自己。
-To understand ownership, you'll need a high-level understanding of public-key encryption which is beyond the scope of this tutorial. ([https://www.youtube.com/watch?v=3QnD2c4Xovk](https://www.youtube.com/watch?v=3QnD2c4Xovk) looks like a good non-technical explanation). All you need to know for this is that the following possible:
+那么问题来了，为什么矿工要花费这么大的精力来添加一个块呢？要么这对于他们来说是一场有趣的游戏，要么我们需要给予他们经济上的奖励。为了让矿工保护区块链，该协议为矿工提供了挖矿奖励，目前是 12.5 比特币。只要它通过我们上面讨论的其他规则，其他节点就会接受这个挖矿节点并允许它奖励自己。
 
-1. There is a way to generate two things, a public key and a private key. Keep the private key secret.
-2. Per the name, the public key is something that you can publish publically to other parties.
-3. In order to proof that you were the one that generated the public key, you can sign a specific message (or arbitrary data) with your private key. Others can take your signature (that is specific to the message), the message as well as your public key and verify that the signature must have indeed come from someone who has control of the private key (as there is no way to satisfactorally sign the message without the private key).
-4. (With a public key, you can encrypt a message (data) so that only the owner of the private key can decrypt it)
+为了理解所有权，你
 
-In short, ownership is the concept of being in control of something, in this case, you "own" the public key, and you can prove such ownership by signing data with your private key. Thus, in order to receive the mining reward, i.e. claim ownership over it, all the miner has to do is to include their public key in the block. That public key is also known as the wallet address in Bitcoin (oversimplication).
+1. 有一种方法可以生成两样东西，一个公钥和一个私钥。保持私钥的秘密。
 
-So let's just simply add a field in the block called `coinbaseBeneficiary` that contains the public key of the miner and add it to the payload for the hash calculation:
+2. 根据名称，公钥是你可以公开发布给其他各方的东西。
+
+3. 
+
+4. 使用公钥，你可以对信息（数据）进行加密，以便只有私钥的拥有者可以解密。
+
+简而言之，所有权是控制某物的概念，在这种情况下，你 "拥有 "公钥，你可以通过用你的私钥签署数据来证明这种所有权。因此，为了获得采矿奖励，即要求对其拥有所有权，矿工所要做的就是在区块中包括他们的公钥。该公钥也被称为比特币的钱包地址（过于简单）。
+
+因此，我们只需在区块中添加一个名为 "coinbaseBeneficiary "的字段，包含矿工的公钥，并将其添加到哈希计算的有效载荷中。
 
 ```javascript
 class Block {
@@ -212,7 +216,6 @@ class Transaction {
 }
 ```
 
-A transaction is simply a declaration to move ownership from one public key to the other, thus all we have to record in a transaction is the public key that has any coins, the target public key and the amount of coins we want to transfer. (In real Bitcoin, UTXOs have to be fully consumed and can have multiple inputs and outputs.) We obviously need to make sure that people only spend coins that exist. We do that with the UTXOPool which keeps track of "balances".
 交易只是一个把公钥的所有权转移给另一个节点的声明，因此我们在交易中只需要记录当前公钥和目标公钥以及想要转多少个币的信息。（在真正的比特币中，UTXO 必须被完全消耗，并且可以有多个输入和输出）我们显然需要确保人们只能花费存在的币。我们通过跟踪“余额”的 UTXOPool 来做到这一点。
 
 ```javascript
@@ -234,7 +237,6 @@ class UTXOPool {
 }
 ```
 
-Since we add the hashes of the transactions to the computation of the block hash, other nodes in the network can easily verify that the transactions are 1. valid given a block's ascendants and 2. came from a node that had to do the "proof-of-work".
 由于我们将交易的哈希信息放到区块中运算了，其他节点能轻易验证出 1. 这个区块的父节点是否有效 2. 这个交易必须来自已经进行了 POW.
 ```javascript
 class Blockchain {
@@ -267,7 +269,7 @@ class Blockchain {
 }
 ```
 
-你应该意识到这是一个保持矿工“真诚”的方法。如果矿工包含了无效的教育，其他节点将拒绝这个区块，认为它不是最长链的一部分。我们要确保有效交易的共识。看看 GIF：
+你应该意识到这是一个保持矿工“真诚”的方法。如果矿工包含了无效的教育，其他节点将拒绝这个区块，认为它不是最长链的一部分。我们要确保有效交易的共识。看看下图：
 
 ![addingtx](https://user-images.githubusercontent.com/571810/33800311-3746ef66-dd0b-11e7-9427-64c0053a4d5e.gif)
 
@@ -334,9 +336,7 @@ class UTXOPool {
 
 [Link to Final Demo](https://blockchain.nambrot.com/)
 
-If you paid attention, you have noticed that it was possible for any node to spend any UTXO available. If that were the case in reality, it would be madness! Let's fix this by completing the ownership story. As we said above, ownership is really just the ability to prove that you have generated the private key. So to know if a transaction was truly the intention of the owner, all we have to do is request a signature of the transaction hash with the private key. Nodes can then verify that the signature is indeed valid for the transaction when they validate transaction of blocks they are receiving.
-如果你注意了，你已经注意到任何节点
-
+你已经注意到任何节点都有可能消费可用的 UTXO。如果是这样也太疯狂了吧！让我们通过所有权来修复这个问题。正如我们上面所说的，所有权实际上就是你可以生成私钥的能力。为了确认所有者的意图，我们需要私钥和一个哈希签名。然后当节点接收到交易的区块时，可以验证签名对交易来说确实有效。
 ```javascript
 class Transaction {
   constructor(inputPublicKey, outputPublicKey, amount, fee, signature) {
@@ -366,13 +366,13 @@ class Block {
 }
 ```
 
-As seen in the GIF below, this will complete our blockchain by tieing control of UTXOs to the corresponding owner of the public key via signatures from their private key.
+如下图所示，这将通过来自私钥的签名将 UTXO 的控制权与公钥的相应所有者联系起来，从而完成我们的区块链
 
 ![transactionsinging](https://user-images.githubusercontent.com/571810/33810869-ab96ec7c-ddd8-11e7-81bd-2435de149d83.gif)
 
-AND THATS IT!!! As you'll hopefully agree with me, blockchains are actually quite simple. So simple that [Bitcoin's original whitepaper](https://bitcoin.org/bitcoin.pdf) is only 8 pages. As we learned in this walkthrough, all you really need to know is some public key encryption knowledge and the fact that some hash functions are very hard to reverse.
+就是这样！！！你应该也觉得区块链非常简单。以至于[比特币白皮书](https://bitcoin.org/bitcoin.pdf)也就简单的 8 页。正如演示所见，您真正需要学习的只是一些公钥加密知识和一些比较绕的哈希函数。
 
-# Wait, there is more
+# 更多
 
 这就结束了？将来我会添加 merkle trees 和 segwit 相关的功能进来，但就目前来说，我希望可以让你更好的理解区块链，比如比特币是怎么工作的。
 
